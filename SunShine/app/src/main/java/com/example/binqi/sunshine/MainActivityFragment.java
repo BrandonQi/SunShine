@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,26 +76,51 @@ public class MainActivityFragment extends Fragment {
             ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             if(networkInfo != null && networkInfo.isConnected()){
-                new getWeatherTask().execute();
+                new getWeatherTask().execute("10025");
             }
-            new getWeatherTask().execute();
             return true;
         }
         return super.onOptionsItemSelected(menuItem);
     }
-    public class getWeatherTask extends AsyncTask<Void, Void, Void> {
+    public class getWeatherTask extends AsyncTask<String, Void, Void> {
+        public final String LOG_CAT = getWeatherTask.class.getSimpleName();
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             try {
-                downloadURL("http://api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=3cd1fb7bb429a24860f198184c4332b9");
+                URL url = buildURL(params);
+                downloadURL(url);
+                //("http://api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=3cd1fb7bb429a24860f198184c4332b9");
                 return null;
             }catch (IOException e) {
                 Log.e(LOG_CAT, "url failed!");
                 return null;
             }
         }
-        public Void downloadURL(String urlString) throws IOException {
-            URL url = new URL(urlString);
+        public URL buildURL(String... params) throws IOException {
+            Log.d(LOG_CAT,"LENGTH IS "+ params.length);
+            String format = "json";
+            String units = "metric";
+            String appid = "3cd1fb7bb429a24860f198184c4332b9";
+            int numDays = 7;
+            final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
+            final String Q_PARAM = "q";
+            final String MODE_PARAM = "mode";
+            final String UNITS_PARAM = "units";
+            final String DAYS_PARAM = "cnt";
+            final String APPID = "APPID";
+
+            Uri buildUri = Uri.parse(BASE_URL).buildUpon()
+                    .appendQueryParameter(Q_PARAM,params[0])
+                    .appendQueryParameter(MODE_PARAM,format)
+                    .appendQueryParameter(UNITS_PARAM,units)
+                    .appendQueryParameter(DAYS_PARAM,Integer.toString(numDays))
+                    .appendQueryParameter(APPID,appid)
+                    .build();
+            URL url = new URL(buildUri.toString());
+            Log.d(LOG_CAT,url.toString());
+            return url;
+        }
+        public Void downloadURL(URL url) throws IOException {
             HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
