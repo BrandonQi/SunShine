@@ -1,6 +1,9 @@
 package com.example.binqi.sunshine;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,19 +41,6 @@ public class MainActivityFragment extends Fragment {
         setHasOptionsMenu(true);
     }
     @Override
-    public void onCreateOptionsMenu(Menu menu,MenuInflater menuInflater){
-        menuInflater.inflate(R.menu.menu_mainfragment, menu);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem){
-        int id = menuItem.getItemId();
-        if(id == R.id.refresh){
-            new getWeatherTask().execute();
-            return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -73,7 +63,24 @@ public class MainActivityFragment extends Fragment {
         listView.setAdapter(mForecastAdapter);
         return rootView;
     }
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater menuInflater){
+        menuInflater.inflate(R.menu.menu_mainfragment, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        int id = menuItem.getItemId();
+        if(id == R.id.refresh){
+            ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if(networkInfo != null && networkInfo.isConnected()){
+                new getWeatherTask().execute();
+            }
+            new getWeatherTask().execute();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
     public class getWeatherTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -91,7 +98,7 @@ public class MainActivityFragment extends Fragment {
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
             int respenseCode = httpURLConnection.getResponseCode();
-            Log.d(LOG_CAT,"response is" + respenseCode);
+            Log.d(LOG_CAT,"response is " + respenseCode);
             String weather = readIT(httpURLConnection.getInputStream());
             return null;
         }
