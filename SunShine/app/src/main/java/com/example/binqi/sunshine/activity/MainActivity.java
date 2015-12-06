@@ -1,12 +1,11 @@
-package com.example.binqi.sunshine;
+package com.example.binqi.sunshine.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+
+import com.example.binqi.sunshine.R;
 
 public class MainActivity extends Activity {
-    public final String LOG_CAT = MainActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
