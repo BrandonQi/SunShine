@@ -9,8 +9,5 @@
 
     <string name="pref_location_title">Location</string>
     <string name="pref_location_key">location</string>
-    <string name="pref_location_default">10025</string>
-    <string name="pref_temperUnit_title">Temperature Unit</string>
-    <string name="pref_temperUnit_key">temperUnit</string>
-    <string name="pref_temperUnit_default">metric</string>
+    <string name="pref_location_defaul">94043</string>
 </resources>

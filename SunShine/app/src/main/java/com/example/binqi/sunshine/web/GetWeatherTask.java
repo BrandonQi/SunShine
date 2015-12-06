@@ -1,13 +1,11 @@
 package com.example.binqi.sunshine.web;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.binqi.sunshine.R;
 import com.example.binqi.sunshine.fragment.MainActivityFragment;
 
 import org.json.JSONException;
@@ -54,6 +52,7 @@ public class GetWeatherTask extends AsyncTask<Context, Void, String[]> {
 
     public URL buildURL() throws IOException {
         String format = "json";
+        String units = "metric";
         String appid = "3cd1fb7bb429a24860f198184c4332b9";
         int numDays = 7;
         final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
@@ -62,9 +61,8 @@ public class GetWeatherTask extends AsyncTask<Context, Void, String[]> {
         final String UNITS_PARAM = "units";
         final String DAYS_PARAM = "cnt";
         final String APPID = "APPID";
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String zipcode = sharedPreferences.getString("location", String.valueOf(R.string.pref_location_default));
-        String units = sharedPreferences.getString("temperUnit", String.valueOf(R.string.pref_temperUnit_default));
+        String zipcode = PreferenceManager.getDefaultSharedPreferences(context).getString("location","10025");
+
         Uri buildUri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(Q_PARAM,zipcode)
                 .appendQueryParameter(MODE_PARAM,format)

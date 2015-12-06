@@ -26,10 +26,11 @@ public class SettingActivityFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         addPreferencesFromResource(R.xml.pref_general);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.OnSharedPreferenceChangeListener prefListenter = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                if (key.equals("location")||key.equals("temperUnit")) {
+                if (key.equals("location")) {
                     ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     if(networkInfo != null && networkInfo.isConnected()){
